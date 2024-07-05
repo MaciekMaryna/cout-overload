@@ -1,60 +1,53 @@
 /******************************************************************************
  * 
- * https://cpp0x.pl/artykuly/Inne-artykuly/Przeciazanie-operatorow-w-C++/15
+ * 
  * 
  ******************************************************************************/
 
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <stdint.h>
 
-namespace simpledb
-{
+// namespace simpledb
+// {
 constexpr uint16_t MaxNumberOfItems {10};
 
 class Item
 {
-    
     uint16_t IdNumber;
-    char* FirstName;
-    char* LastName;
-    char* HomeAddress;
+    std::string FirstName;
+    std::string LastName;
+    std::string HomeAddress;
     
     static uint16_t NumberOfItems;
+    friend std::ostream  & operator<< (std::ostream &os, const Item &obj);    
 
 public:
 
-    Item(char *, char *);
+    Item(std::string, std::string);
     ~Item();
-    void Show();
+    void Show(); //niech zwraca std::string //toString zamiast Show()
     Item &operator= (const Item &);  
-    friend std::ostream  & operator<< (std::ostream &os, const Item &obj);
+
 };
 
 /*******************************************************************************
-*
+* 
 ******************************************************************************/
-Item::Item(char *fn, char *ln)  
+Item::Item(std::string fn, std::string ln)  
 {
-    FirstName = new char[strlen(fn) + 1];
-    LastName = new char[strlen(ln) + 1];    
-
-    strcpy(FirstName, fn);
-    strcpy(LastName, ln);
+    FirstName = fn;
+    LastName = ln;    
 
     IdNumber = NumberOfItems;
     NumberOfItems++;
     
-    std::cout << "Common constructor works\n";
+    std::cout << "Common constructor works\n\n";
 }
 
 Item::~Item()
 {
-    for (auto i = 0; i < Item::NumberOfItems; i++)
-    {
-        std::cout << i << std::endl;
-    }
-    std::cout << "\nBye...\n";
+    std::cout << "Bye...\n";
 }
 
 void Item::Show()
@@ -64,34 +57,35 @@ void Item::Show()
     std::cout << "Last name:  " << LastName << std::endl << std::endl;
 }
 
-Item &Item::operator= (const Item &Data)
+Item & Item::operator= (const Item &Data)
 {
     this -> FirstName = Data.FirstName;
     this -> LastName = Data.LastName;
     return *this;
 }
-} /* namespace simpledb */
 
-std::ostream  & operator<< (std::ostream &os, const simpledb::Item &obj) 
+// } /* namespace simpledb */
+
+// using namespace simpledb;
+
+std::ostream  & operator<< (std::ostream &os, const Item &obj) 
 {
     os << "Fitst name: "<< obj.FirstName << 
         " , Last name: " << obj.LastName;
     return os;
 }
 
-using namespace simpledb;
-
 uint16_t Item::NumberOfItems = 0;
 
 /*******************************************************************************
 * Main function
-******************************************************************************/
+*******************************************************************************/
 int main()
 {
-
     Item MyItem1("Albert", "Einstein");
     Item MyItem2("Nicolae", "Tesla");
-    
+    //Item MyItem3(MyItem2);
+
     MyItem1.Show();
     MyItem2.Show();
     
@@ -100,5 +94,18 @@ int main()
     MyItem3 = MyItem2;
     MyItem3.Show();
 
+    //cout << (MyItem3 << 1);
+    
     return 0;
 }
+
+/*******************************************************************************
+* TODO
+*   - Konstruktor kopiujący do kompletu + Destryktor : "Zasada trzech" lub "Zasada pięciu"
+*   - Przestudiować koncepcję referencji w zestawieniu ze wskaźnikami
+*   - Dlaczego friend nie ma dostępu do pól prywantnych? Coś nie tak z namespace
+*   - Zlikwidować funkcję Show żeby. Klasa ma zwracać (w miejsce gdzie jest wywołana) obiekt. 
+    Inna warstwa ma zająć się wyświetleniem tego, co ona zwróciła. Bez tego koncepcja zapisu 
+    "cout<<a<<b;" nie ma sensu.
+*
+*******************************************************************************/
