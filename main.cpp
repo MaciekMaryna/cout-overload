@@ -25,24 +25,35 @@ class Item
 public:
 
     Item(std::string, std::string);
+
+    //  3_Rule
     ~Item();
-    void Show(); //niech zwraca std::string //toString zamiast Show()
+    Item(const Item &);
     Item &operator= (const Item &);  
+
+    // std::ostream ToString();
+    //void Show(); //niech zwraca std::string //toString zamiast Show()
 
 };
 
 /*******************************************************************************
-* 
+*  The rule of three
+********************************************************************************    
+*    If a class requires a user-defined-
+*       - destructor, 
+*       - copy constructor, or 
+*       - copy assignment operator, 
+*    it almost certainly requires all three. 
 ******************************************************************************/
+
 Item::Item(std::string fn, std::string ln)  
 {
     FirstName = fn;
     LastName = ln;    
-
     IdNumber = NumberOfItems;
     NumberOfItems++;
     
-    std::cout << "Common constructor works\n\n";
+    std::cout << "Common constructor works\n";
 }
 
 Item::~Item()
@@ -50,28 +61,33 @@ Item::~Item()
     std::cout << "Bye...\n";
 }
 
-void Item::Show()
+Item::Item(const Item &ObjectToCopy) 
 {
-    std::cout << "ID:         " << IdNumber << std::endl;
-    std::cout << "First name: " << FirstName << std::endl;
-    std::cout << "Last name:  " << LastName << std::endl << std::endl;
+    this -> FirstName = ObjectToCopy.FirstName;
+    this -> LastName = ObjectToCopy.LastName;    
+    this -> IdNumber = NumberOfItems;
+    NumberOfItems++;  
+    std::cout << "Copy constructor works\n";    
 }
 
 Item & Item::operator= (const Item &Data)
 {
     this -> FirstName = Data.FirstName;
     this -> LastName = Data.LastName;
+    
+    std::cout << "Assignment operator works\n";    
     return *this;
 }
 
 // } /* namespace simpledb */
-
 // using namespace simpledb;
 
 std::ostream  & operator<< (std::ostream &os, const Item &obj) 
 {
-    os << "Fitst name: "<< obj.FirstName << 
-        " , Last name: " << obj.LastName;
+    os  << "ID: " << obj.IdNumber 
+        << ", FIRST_NAME: "<< obj.FirstName 
+        << ", LAST_NAME: " << obj.LastName;
+
     return os;
 }
 
@@ -84,28 +100,41 @@ int main()
 {
     Item MyItem1("Albert", "Einstein");
     Item MyItem2("Nicolae", "Tesla");
-    //Item MyItem3(MyItem2);
-
-    MyItem1.Show();
-    MyItem2.Show();
-    
     Item MyItem3("Thomas", "Edison");
-    MyItem3.Show();
-    MyItem3 = MyItem2;
-    MyItem3.Show();
 
-    //cout << (MyItem3 << 1);
-    
+    std::cout   << "MyItem1: " << MyItem1 << std::endl 
+                << "MyItem2: " << MyItem2 << std::endl
+                << "MyItem3: " << MyItem3 << std::endl;
+
+    Item MyItem4 = MyItem3;
+
+    Item MyItem5("-", "-");
+    MyItem5 = MyItem1;
+
+    std::cout   << "MyItem1: " << MyItem1 << std::endl 
+                << "MyItem2: " << MyItem2 << std::endl
+                << "MyItem3: " << MyItem3 << std::endl
+                << "MyItem4: " << MyItem4 << std::endl
+                << "MyItem5: " << MyItem5 << std::endl;
+
     return 0;
 }
 
 /*******************************************************************************
+* 4.07.2024
 * TODO
-*   - Konstruktor kopiujący do kompletu + Destryktor : "Zasada trzech" lub "Zasada pięciu"
-*   - Przestudiować koncepcję referencji w zestawieniu ze wskaźnikami
-*   - Dlaczego friend nie ma dostępu do pól prywantnych? Coś nie tak z namespace
-*   - Zlikwidować funkcję Show żeby. Klasa ma zwracać (w miejsce gdzie jest wywołana) obiekt. 
-    Inna warstwa ma zająć się wyświetleniem tego, co ona zwróciła. Bez tego koncepcja zapisu 
-    "cout<<a<<b;" nie ma sensu.
+*   OK  - Konstruktor kopiujący do kompletu + Destryktor : "Zasada trzech" lub "Zasada pięciu"
+*   OK  - Przestudiować koncepcję referencji w zestawieniu ze wskaźnikami
+*   ??  - Dlaczego friend nie ma dostępu do pól prywantnych? Coś nie tak z namespace
+*   OK  - Zlikwidować funkcję Show. Klasa ma zwracać (w miejsce gdzie jest wywołana) obiekt. 
+*           Inna warstwa ma zająć się wyświetleniem tego, co ona zwróciła. Bez tego koncepcja zapisu 
+*           "cout<<a<<b;" nie ma sensu.
+*
+* 12.072024 Q:
+*   - 3_Rule - po co, żeby miec? Nie mam żadnych obiektów tworzonych dynamicznie, 
+*    pliów ani innych zasobów. A skoro tak to co powinny zawirać?
+*   - 5_Rule - co to jest semantyka ruchu (move?)
+*
+*
 *
 *******************************************************************************/
