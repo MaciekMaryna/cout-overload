@@ -20,7 +20,8 @@ class Item
     std::string HomeAddress;
     
     static uint16_t NumberOfItems;
-    friend std::ostream  & operator<< (std::ostream &os, const Item &obj);    
+    friend std::ostream  & operator<< (std::ostream &os, const Item &obj); 
+    friend std::ostream  & operator<< (std::ostream &os, const Item *obj);   
 
 public:
 
@@ -53,12 +54,12 @@ Item::Item(std::string fn, std::string ln)
     IdNumber = NumberOfItems;
     NumberOfItems++;
     
-    std::cout << "Common constructor works\n";
+    std::cout << "Common constructor works: " << NumberOfItems << std::endl;
 }
 
 Item::~Item()
 {
-    std::cout << "Bye...\n";
+    std::cout << "Bye: " << NumberOfItems-- << std::endl;
 }
 
 Item::Item(const Item &ObjectToCopy) 
@@ -67,7 +68,7 @@ Item::Item(const Item &ObjectToCopy)
     this -> LastName = ObjectToCopy.LastName;    
     this -> IdNumber = NumberOfItems;
     NumberOfItems++;  
-    std::cout << "Copy constructor works\n";    
+    std::cout << "Copy constructor works: " << NumberOfItems << std::endl;   
 }
 
 Item & Item::operator= (const Item &Data)
@@ -75,7 +76,7 @@ Item & Item::operator= (const Item &Data)
     this -> FirstName = Data.FirstName;
     this -> LastName = Data.LastName;
     
-    std::cout << "Assignment operator works\n";    
+    std::cout << "Assignment operator works: " << NumberOfItems << std::endl;   
     return *this;
 }
 
@@ -88,6 +89,14 @@ std::ostream  & operator<< (std::ostream &os, const Item &obj)
         << ", FIRST_NAME: "<< obj.FirstName 
         << ", LAST_NAME: " << obj.LastName;
 
+    return os;
+}
+
+std::ostream  & operator<< (std::ostream &os, const Item *obj)
+{
+        os  << "ID*: " << obj -> IdNumber 
+            << ", FIRST_NAME*: "<< obj -> FirstName 
+            << ", LAST_NAME*: " << obj -> LastName;
     return os;
 }
 
@@ -117,6 +126,10 @@ int main()
                 << "MyItem4: " << MyItem4 << std::endl
                 << "MyItem5: " << MyItem5 << std::endl;
 
+    Item * pItem = &MyItem1;
+
+    std::cout   << std::endl << "MyItem1: " << pItem << std::endl;
+
     return 0;
 }
 
@@ -130,11 +143,18 @@ int main()
 *           Inna warstwa ma zająć się wyświetleniem tego, co ona zwróciła. Bez tego koncepcja zapisu 
 *           "cout<<a<<b;" nie ma sensu.
 *
-* 12.072024 Q:
+* 11.07.2024 
+    Q:
 *   - 3_Rule - po co, żeby miec? Nie mam żadnych obiektów tworzonych dynamicznie, 
 *    pliów ani innych zasobów. A skoro tak to co powinny zawirać?
 *   - 5_Rule - co to jest semantyka ruchu (move?)
 *
-*
-*
+* 12.07.2024
+*   TODO
+*    -
+*    -
+*    -
+*    -
+*    -
+*    -
 *******************************************************************************/
